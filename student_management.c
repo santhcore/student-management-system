@@ -81,6 +81,52 @@ void searchStudent(struct Student s[], int count)
 
 // Main function
 int main()
+void loadStudents(struct Student s[], int *count)
+{
+    FILE *fp;
+
+    fp = fopen("students.dat", "rb");
+
+    if (fp == NULL)
+    {
+        *count = 0;
+        return;
+    }
+
+    if (fread(count, sizeof(int), 1, fp) != 1 ||
+        *count < 0 || *count > 100)
+    {
+        *count = 0;
+        fclose(fp);
+        return;
+    }
+
+    if (fread(s, sizeof(struct Student), *count, fp) != (size_t)*count)
+    {
+        *count = 0;
+    }
+
+    fclose(fp);
+}
+void saveStudents(struct Student s[], int count)
+{
+    FILE *fp;
+
+    fp = fopen("students.dat", "wb");
+
+    if (fp == NULL)
+    {
+        printf("Error saving records!\n");
+        return;
+    }
+
+    fwrite(&count, sizeof(int), 1, fp);
+    fwrite(s, sizeof(struct Student), count, fp);
+
+    fclose(fp);
+
+    printf("Records saved successfully!\n");
+}
 void deleteStudent(struct Student s[], int *count)
 {
     int roll, i, j, found = 0;
