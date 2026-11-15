@@ -50,6 +50,30 @@ void displayStudents(struct Student s[], int count)
 }
 
 int main()
+void searchStudent(struct Student s[], int count)
+{
+    int roll, i, found = 0;
+
+    printf("Enter Roll Number to search: ");
+    scanf("%d", &roll);
+
+    for (i = 0; i < count; i++)
+    {
+        if (s[i].roll == roll)
+        {
+            printf("\nStudent Found!\n");
+            printf("Roll Number: %d\n", s[i].roll);
+            printf("Name: %s\n", s[i].name);
+            printf("Marks: %.2f\n", s[i].marks);
+            found = 1;
+            break;
+        }
+    }
+
+    if (found == 0)
+        printf("Student not found!\n");
+}
+
 {
     struct Student s[100];
     int count = 0, choice;
