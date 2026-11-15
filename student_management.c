@@ -7,7 +7,7 @@ struct Student
     float marks;
 };
 
-// Function to add a student
+// Add Student
 void addStudent(struct Student s[], int *count)
 {
     if (*count >= 100)
@@ -30,7 +30,7 @@ void addStudent(struct Student s[], int *count)
     printf("\nStudent added successfully!\n");
 }
 
-// Function to display all students
+// Display Students
 void displayStudents(struct Student s[], int count)
 {
     int i;
@@ -51,7 +51,7 @@ void displayStudents(struct Student s[], int count)
     }
 }
 
-// Function to search for a student
+// Search Student
 void searchStudent(struct Student s[], int count)
 {
     int roll, i, found = 0;
@@ -67,66 +67,44 @@ void searchStudent(struct Student s[], int count)
             printf("Roll Number: %d\n", s[i].roll);
             printf("Name: %s\n", s[i].name);
             printf("Marks: %.2f\n", s[i].marks);
-
             found = 1;
             break;
         }
     }
 
     if (found == 0)
-    {
         printf("\nStudent not found!\n");
-    }
 }
 
-// Main function
-int main()
-void loadStudents(struct Student s[], int *count)
+// Update Student
+void updateStudent(struct Student s[], int count)
 {
-    FILE *fp;
+    int roll, i, found = 0;
 
-    fp = fopen("students.dat", "rb");
+    printf("Enter Roll Number to update: ");
+    scanf("%d", &roll);
 
-    if (fp == NULL)
+    for (i = 0; i < count; i++)
     {
-        *count = 0;
-        return;
+        if (s[i].roll == roll)
+        {
+            printf("Enter New Name: ");
+            scanf("%49s", s[i].name);
+
+            printf("Enter New Marks: ");
+            scanf("%f", &s[i].marks);
+
+            printf("\nStudent updated successfully!\n");
+            found = 1;
+            break;
+        }
     }
 
-    if (fread(count, sizeof(int), 1, fp) != 1 ||
-        *count < 0 || *count > 100)
-    {
-        *count = 0;
-        fclose(fp);
-        return;
-    }
-
-    if (fread(s, sizeof(struct Student), *count, fp) != (size_t)*count)
-    {
-        *count = 0;
-    }
-
-    fclose(fp);
+    if (found == 0)
+        printf("\nStudent not found!\n");
 }
-void saveStudents(struct Student s[], int count)
-{
-    FILE *fp;
 
-    fp = fopen("students.dat", "wb");
-
-    if (fp == NULL)
-    {
-        printf("Error saving records!\n");
-        return;
-    }
-
-    fwrite(&count, sizeof(int), 1, fp);
-    fwrite(s, sizeof(struct Student), count, fp);
-
-    fclose(fp);
-
-    printf("Records saved successfully!\n");
-}
+// Delete Student
 void deleteStudent(struct Student s[], int *count)
 {
     int roll, i, j, found = 0;
@@ -152,41 +130,71 @@ void deleteStudent(struct Student s[], int *count)
     }
 
     if (found == 0)
-    {
         printf("\nStudent not found!\n");
-    }
 }
-void updateStudent(struct Student s[], int count)
+
+// Save Students
+void saveStudents(struct Student s[], int count)
 {
-    int roll, i, found = 0;
+    FILE *fp = fopen("students.dat", "wb");
 
-    printf("Enter Roll Number to update: ");
-    scanf("%d", &roll);
-
-    for (i = 0; i < count; i++)
+    if (fp == NULL)
     {
-        if (s[i].roll == roll)
-        {
-            printf("Enter New Name: ");
-            scanf("%49s", s[i].name);
-
-            printf("Enter New Marks: ");
-            scanf("%f", &s[i].marks);
-
-            printf("\nStudent updated successfully!\n");
-            found = 1;
-            break;
-        }
+        printf("Error saving records!\n");
+        return;
     }
 
-    if (found == 0)
+    if (fwrite(&count, sizeof(int), 1, fp) != 1 ||
+        fwrite(s, sizeof(struct Student), count, fp) != (size_t)count)
     {
-        printf("\nStudent not found!\n");
+        printf("Error writing records!\n");
     }
+    else
+    {
+        printf("Records saved successfully!\n");
+    }
+
+    fclose(fp);
 }
+
+// Load Students
+void loadStudents(struct Student s[], int *count)
+{
+    FILE *fp = fopen("students.dat", "rb");
+
+    if (fp == NULL)
+    {
+        *count = 0;
+        return;
+    }
+
+    if (fread(count, sizeof(int), 1, fp) != 1 ||
+        *count < 0 || *count > 100)
+    {
+        *count = 0;
+        fclose(fp);
+        return;
+    }
+
+    if (fread(s, sizeof(struct Student), *count, fp) !=
+        (size_t)*count)
+    {
+        *count = 0;
+    }
+
+    fclose(fp);
+}
+
+// Main Function
+int main()
 {
     struct Student s[100];
     int count = 0, choice;
+
+    // Load records at startup
+    loadStudents(s, &count);
+
+    printf("Student records loaded: %d\n", count);
 
     do
     {
@@ -194,8 +202,8 @@ void updateStudent(struct Student s[], int count)
         printf("1. Add Student\n");
         printf("2. Display Students\n");
         printf("3. Search Student\n");
-        printf("4. Update student\n");
-        printf("5. Delete student\n");
+        printf("4. Update Student\n");
+        printf("5. Delete Student\n");
         printf("6. Exit\n");
 
         printf("Enter your choice: ");
@@ -214,21 +222,22 @@ void updateStudent(struct Student s[], int count)
             case 3:
                 searchStudent(s, count);
                 break;
-            
+
             case 4:
-            updateStudent(s, count);
-            break;
+                updateStudent(s, count);
+                break;
 
             case 5:
-            deleteStudent(s, count);
-            break;
-            
+                deleteStudent(s, &count);
+                break;
+
             case 6:
-                printf("\nExiting program...\n");
+                saveStudents(s, count);
+                printf("Exiting program...\n");
                 break;
 
             default:
-                printf("\nInvalid choice! Try again.\n");
+                printf("Invalid choice! Try again.\n");
         }
 
     } while (choice != 6);
