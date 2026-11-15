@@ -81,6 +81,35 @@ void searchStudent(struct Student s[], int count)
 
 // Main function
 int main()
+void deleteStudent(struct Student s[], int *count)
+{
+    int roll, i, j, found = 0;
+
+    printf("Enter Roll Number to delete: ");
+    scanf("%d", &roll);
+
+    for (i = 0; i < *count; i++)
+    {
+        if (s[i].roll == roll)
+        {
+            for (j = i; j < *count - 1; j++)
+            {
+                s[j] = s[j + 1];
+            }
+
+            (*count)--;
+            found = 1;
+
+            printf("\nStudent deleted successfully!\n");
+            break;
+        }
+    }
+
+    if (found == 0)
+    {
+        printf("\nStudent not found!\n");
+    }
+}
 void updateStudent(struct Student s[], int count)
 {
     int roll, i, found = 0;
@@ -120,7 +149,8 @@ void updateStudent(struct Student s[], int count)
         printf("2. Display Students\n");
         printf("3. Search Student\n");
         printf("4. Update student\n");
-        printf("5. Exit\n");
+        printf("5. Delete student\n");
+        printf("6. Exit\n");
 
         printf("Enter your choice: ");
         scanf("%d", &choice);
@@ -142,8 +172,12 @@ void updateStudent(struct Student s[], int count)
             case 4:
             updateStudent(s, count);
             break;
-            
+
             case 5:
+            deleteStudent(s, count);
+            break;
+            
+            case 6:
                 printf("\nExiting program...\n");
                 break;
 
@@ -151,7 +185,7 @@ void updateStudent(struct Student s[], int count)
                 printf("\nInvalid choice! Try again.\n");
         }
 
-    } while (choice != 5);
+    } while (choice != 6);
 
     return 0;
 }
