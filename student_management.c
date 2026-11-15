@@ -7,6 +7,7 @@ struct Student
     float marks;
 };
 
+// Function to add a student
 void addStudent(struct Student s[], int *count)
 {
     if (*count >= 100)
@@ -26,20 +27,21 @@ void addStudent(struct Student s[], int *count)
 
     (*count)++;
 
-    printf("Student added successfully!\n");
+    printf("\nStudent added successfully!\n");
 }
 
+// Function to display all students
 void displayStudents(struct Student s[], int count)
 {
     int i;
 
     if (count == 0)
     {
-        printf("No student records found!\n");
+        printf("\nNo student records found!\n");
         return;
     }
 
-    printf("\n--- Student Records ---\n");
+    printf("\n--- STUDENT RECORDS ---\n");
 
     for (i = 0; i < count; i++)
     {
@@ -49,7 +51,7 @@ void displayStudents(struct Student s[], int count)
     }
 }
 
-int main()
+// Function to search for a student
 void searchStudent(struct Student s[], int count)
 {
     int roll, i, found = 0;
@@ -65,15 +67,20 @@ void searchStudent(struct Student s[], int count)
             printf("Roll Number: %d\n", s[i].roll);
             printf("Name: %s\n", s[i].name);
             printf("Marks: %.2f\n", s[i].marks);
+
             found = 1;
             break;
         }
     }
 
     if (found == 0)
-        printf("Student not found!\n");
+    {
+        printf("\nStudent not found!\n");
+    }
 }
 
+// Main function
+int main()
 {
     struct Student s[100];
     int count = 0, choice;
@@ -83,7 +90,9 @@ void searchStudent(struct Student s[], int count)
         printf("\n===== STUDENT MANAGEMENT SYSTEM =====\n");
         printf("1. Add Student\n");
         printf("2. Display Students\n");
-        printf("3. Exit\n");
+        printf("3. Search Student\n");
+        printf("4. Exit\n");
+
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
@@ -98,14 +107,18 @@ void searchStudent(struct Student s[], int count)
                 break;
 
             case 3:
-                printf("Exiting program...\n");
+                searchStudent(s, count);
+                break;
+
+            case 4:
+                printf("\nExiting program...\n");
                 break;
 
             default:
-                printf("Invalid choice!\n");
+                printf("\nInvalid choice! Try again.\n");
         }
 
-    } while (choice != 3);
+    } while (choice != 4);
 
     return 0;
 }
