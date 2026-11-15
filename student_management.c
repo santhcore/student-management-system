@@ -7,9 +7,30 @@ struct Student
     float marks;
 };
 
-// Add Student
+// Function to calculate grade
+void calculateGrade(float marks)
+{
+    if (marks >= 90)
+        printf("Grade: A+\n");
+    else if (marks >= 80)
+        printf("Grade: A\n");
+    else if (marks >= 70)
+        printf("Grade: B\n");
+    else if (marks >= 60)
+        printf("Grade: C\n");
+    else if (marks >= 50)
+        printf("Grade: D\n");
+    else if (marks >= 40)
+        printf("Grade: E\n");
+    else
+        printf("Grade: F\n");
+}
+
+// Function to add student
 void addStudent(struct Student s[], int *count)
 {
+    int i;
+
     if (*count >= 100)
     {
         printf("Student limit reached!\n");
@@ -19,39 +40,60 @@ void addStudent(struct Student s[], int *count)
     printf("Enter Roll Number: ");
     scanf("%d", &s[*count].roll);
 
+    if (s[*count].roll <= 0)
+    {
+        printf("Invalid roll number!\n");
+        return;
+    }
+
+    for (i = 0; i < *count; i++)
+    {
+        if (s[i].roll == s[*count].roll)
+        {
+            printf("Roll Number already exists!\n");
+            return;
+        }
+    }
+
     printf("Enter Name: ");
     scanf("%49s", s[*count].name);
 
-    printf("Enter Marks: ");
+    printf("Enter Marks (0-100): ");
     scanf("%f", &s[*count].marks);
 
-    (*count)++;
+    if (s[*count].marks < 0 || s[*count].marks > 100)
+    {
+        printf("Invalid marks!\n");
+        return;
+    }
 
-    printf("\nStudent added successfully!\n");
+    (*count)++;
+    printf("Student added successfully!\n");
 }
 
-// Display Students
+// Function to display students
 void displayStudents(struct Student s[], int count)
 {
     int i;
 
     if (count == 0)
     {
-        printf("\nNo student records found!\n");
+        printf("No student records found!\n");
         return;
     }
 
-    printf("\n--- STUDENT RECORDS ---\n");
+    printf("\n===== STUDENT RECORDS =====\n");
 
     for (i = 0; i < count; i++)
     {
         printf("\nRoll Number: %d\n", s[i].roll);
         printf("Name: %s\n", s[i].name);
         printf("Marks: %.2f\n", s[i].marks);
+        calculateGrade(s[i].marks);
     }
 }
 
-// Search Student
+// Function to search student
 void searchStudent(struct Student s[], int count)
 {
     int roll, i, found = 0;
@@ -67,19 +109,21 @@ void searchStudent(struct Student s[], int count)
             printf("Roll Number: %d\n", s[i].roll);
             printf("Name: %s\n", s[i].name);
             printf("Marks: %.2f\n", s[i].marks);
+            calculateGrade(s[i].marks);
             found = 1;
             break;
         }
     }
 
-    if (found == 0)
-        printf("\nStudent not found!\n");
+    if (!found)
+        printf("Student not found!\n");
 }
 
-// Update Student
+// Function to update student
 void updateStudent(struct Student s[], int count)
 {
     int roll, i, found = 0;
+    float newMarks;
 
     printf("Enter Roll Number to update: ");
     scanf("%d", &roll);
@@ -91,20 +135,28 @@ void updateStudent(struct Student s[], int count)
             printf("Enter New Name: ");
             scanf("%49s", s[i].name);
 
-            printf("Enter New Marks: ");
-            scanf("%f", &s[i].marks);
+            printf("Enter New Marks (0-100): ");
+            scanf("%f", &newMarks);
 
-            printf("\nStudent updated successfully!\n");
+            if (newMarks < 0 || newMarks > 100)
+            {
+                printf("Invalid marks!\n");
+                return;
+            }
+
+            s[i].marks = newMarks;
+
+            printf("Student updated successfully!\n");
             found = 1;
             break;
         }
     }
 
-    if (found == 0)
-        printf("\nStudent not found!\n");
+    if (!found)
+        printf("Student not found!\n");
 }
 
-// Delete Student
+// Function to delete student
 void deleteStudent(struct Student s[], int *count)
 {
     int roll, i, j, found = 0;
@@ -124,16 +176,16 @@ void deleteStudent(struct Student s[], int *count)
             (*count)--;
             found = 1;
 
-            printf("\nStudent deleted successfully!\n");
+            printf("Student deleted successfully!\n");
             break;
         }
     }
 
-    if (found == 0)
-        printf("\nStudent not found!\n");
+    if (!found)
+        printf("Student not found!\n");
 }
 
-// Save Students
+// Function to save student records
 void saveStudents(struct Student s[], int count)
 {
     FILE *fp = fopen("students.dat", "wb");
@@ -157,7 +209,7 @@ void saveStudents(struct Student s[], int count)
     fclose(fp);
 }
 
-// Load Students
+// Function to load student records
 void loadStudents(struct Student s[], int *count)
 {
     FILE *fp = fopen("students.dat", "rb");
@@ -185,13 +237,96 @@ void loadStudents(struct Student s[], int *count)
     fclose(fp);
 }
 
-// Main Function
+// Function to calculate class average
+void calculateAverage(struct Student s[], int count)
+{
+    int i;
+    float total = 0;
+
+    if (count == 0)
+    {
+        printf("No student records available!\n");
+        return;
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        total += s[i].marks;
+    }
+
+    printf("\nTotal Students: %d\n", count);
+    printf("Total Marks: %.2f\n", total);
+    printf("Class Average: %.2f\n", total / count);
+}
+
+// Function to generate performance report
+void performanceReport(struct Student s[], int count)
+{
+    int i, topper = 0, lowest = 0;
+
+    if (count == 0)
+    {
+        printf("No student records available!\n");
+        return;
+    }
+
+    for (i = 1; i < count; i++)
+    {
+        if (s[i].marks > s[topper].marks)
+            topper = i;
+
+        if (s[i].marks < s[lowest].marks)
+            lowest = i;
+    }
+
+    printf("\n===== PERFORMANCE REPORT =====\n");
+
+    printf("\nTopper:\n");
+    printf("Name: %s\n", s[topper].name);
+    printf("Roll Number: %d\n", s[topper].roll);
+    printf("Marks: %.2f\n", s[topper].marks);
+
+    printf("\nLowest Scorer:\n");
+    printf("Name: %s\n", s[lowest].name);
+    printf("Roll Number: %d\n", s[lowest].roll);
+    printf("Marks: %.2f\n", s[lowest].marks);
+}
+
+// Function to generate individual percentage report
+void studentPercentage(struct Student s[], int count)
+{
+    int roll, i, found = 0;
+
+    printf("Enter Roll Number: ");
+    scanf("%d", &roll);
+
+    for (i = 0; i < count; i++)
+    {
+        if (s[i].roll == roll)
+        {
+            printf("\n===== STUDENT REPORT =====\n");
+            printf("Name: %s\n", s[i].name);
+            printf("Roll Number: %d\n", s[i].roll);
+            printf("Marks: %.2f\n", s[i].marks);
+            printf("Percentage: %.2f%%\n", s[i].marks);
+
+            calculateGrade(s[i].marks);
+
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found)
+        printf("Student not found!\n");
+}
+
+// Main function
 int main()
 {
     struct Student s[100];
     int count = 0, choice;
 
-    // Load records at startup
     loadStudents(s, &count);
 
     printf("Student records loaded: %d\n", count);
@@ -205,8 +340,11 @@ int main()
         printf("4. Update Student\n");
         printf("5. Delete Student\n");
         printf("6. Exit\n");
+        printf("7. Calculate Class Average\n");
+        printf("8. Student Performance Report\n");
+        printf("9. Student Percentage Report\n");
 
-        printf("Enter your choice: ");
+        printf("\nEnter your choice: ");
         scanf("%d", &choice);
 
         switch (choice)
@@ -234,6 +372,18 @@ int main()
             case 6:
                 saveStudents(s, count);
                 printf("Exiting program...\n");
+                break;
+
+            case 7:
+                calculateAverage(s, count);
+                break;
+
+            case 8:
+                performanceReport(s, count);
+                break;
+
+            case 9:
+                studentPercentage(s, count);
                 break;
 
             default:
